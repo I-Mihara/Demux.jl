@@ -20,21 +20,18 @@ To be published.
 - [Basic Usage](#basic-usage)
   - [Input](#input)
   - [Output](#output)
+- [Tips to Speed Up Demultiplexing](#tips-to-speed-up-demultiplexing)
 - [Options](#options)
   - [Example: How Barcode Length and Option Values Affect Classification](#example-how-barcode-length-and-option-values-affect-classification)
-- [Tips to Speed Up Demultiplexing](#tips-to-speed-up-demultiplexing)
 - [Support or Contact](#support-or-contact)
 
 
-## Installation
-
-### Dependencies
+## Dependencies
 * Julia >= 1.10.5 (includes the `Distributed` standard library)
 * DataFrames >= 1.7.0
 * CSV >= 0.10.14
 
-### Step 0: Install Julia
-If you haven't installed Julia yet, you can download it from the [official Julia website](https://julialang.org/downloads/). Follow the instructions there for your operating system.
+## Installation
 
 ### Option 1: Using Julia's Pkg REPL Mode
 1. Open the Julia REPL (by typing `julia` in the terminal).
@@ -87,6 +84,32 @@ ID  Full_seq	Full_annotation
 * The names of the output files are based on the `ID` values in the barcode reference file. For example, if the reference file contains IDs such as `001` and `002`, the resulting output files will be named `001.fastq`, `002.fastq`, and so on.
 * Sequences that do not match any barcode in the reference file are saved in `unknown.fastq`. Sequences that have ambiguous classification (i.e., they match multiple barcodes with similar scores) are saved in `ambiguous_classification.fastq`.
 * The function will throw an error if the specified `output_directory` already exists to prevent overwriting. A new directory is created to store the output files.
+
+## Tips to Speed Up Demultiplexing
+
+### 1. Parallel Computing
+`Demux.jl` supports parallel computing, allowing faster processing of large datasets. To utilize parallel processing, follow the steps below:
+
+#### Starting Julia with Multiple Threads
+To enable parallel processing, you need to start Julia with multiple threads. Use the `-p` flag followed by the number of desired threads:
+```bash
+./julia -p [number_of_threads]
+```
+#### Adding Worker Processes After Starting Julia
+Even after starting the Julia REPL, you can add more worker processes using the `Distributed` module:
+```julia
+using Distributed
+addprocs(n) # 'n' is the number of desired workers
+```
+#### Runnning `execute_demutltiplexing` with Parallel Computing
+Once the worker processes are set up. you can perform parallel computing using the `execute_demultiplexing` function. `Demux.jl` automatically divides the files based on the available worker processes for faster computation:
+```julia
+@everywhere using Demux
+execute_demultiplexing(FASTQ_R1, FASTQ_R2, barcode_file, output_directory)
+```
+
+### 2. Setting Options
+Demux.jl skips calculation of unnecessary path in DP matrix based on the settings of `max_error_rate`,`mismatch`. and `indel`. By setting lower max error rate or higher penalty, you can further increase computation speed.
 
 ## Options
 
@@ -146,31 +169,6 @@ With this settings, the classification works as follows:
 4. **Unknown Classification**:
    - If the sequence fails to match **any** barcode within the maximum allowed penalty score of 2, it is classified as `unknown.fastq`.
 
-## Tips to Speed Up Demultiplexing
-
-### 1. Parallel Computing
-`Demux.jl` supports parallel computing, allowing faster processing of large datasets. To utilize parallel processing, follow the steps below:
-
-#### Starting Julia with Multiple Threads
-To enable parallel processing, you need to start Julia with multiple threads. Use the `-p` flag followed by the number of desired threads:
-```bash
-./julia -p [number_of_threads]
-```
-#### Adding Worker Processes After Starting Julia
-Even after starting the Julia REPL, you can add more worker processes using the `Distributed` module:
-```julia
-using Distributed
-addprocs(n) # 'n' is the number of desired workers
-```
-#### Runnning `execute_demutltiplexing` with Parallel Computing
-Once the worker processes are set up. you can perform parallel computing using the `execute_demultiplexing` function. `Demux.jl` automatically divides the files based on the available worker processes for faster computation:
-```julia
-@everywhere using Demux
-execute_demultiplexing(FASTQ_R1, FASTQ_R2, barcode_file, output_directory)
-```
-
-### 2. Setting Options
-Demux.jl skips calculation of unnecessary path in DP matrix based on the settings of `max_error_rate`,`mismatch`. and `indel`. By setting lower max error rate or higher penalty, you can further increase computation speed.
 
 ## Support or Contanct
 If you encounter any issues or have requests, please provide feedback by posting a new GitHub issue on our repository. We appreciate your input and will do our best to assist you!
