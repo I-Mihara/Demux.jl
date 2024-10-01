@@ -3,11 +3,13 @@ Orchestrates the entire demultiplexing process for FASTQ files.
 Handles the preprocessing, dividing, demultiplexing, and merging of files.
 """
 function execute_demultiplexing(file_R1::String, file_R2::String, bc_file::String, output_dir::String; max_error_rate::Float64 = 0.22, min_delta::Float64 = 0.1, mismatch::Int = 1, indel::Int = 1, classify_both::Bool = false, bc_rev::Bool = true)
-	if isdir(output_dir)
+	if !isdir(output_dir)
 		error("Output directory already exists")
 	end
 	mkdir(output_dir)
 	workers = nworkers()
+	file_R1 = preprocess_fastq(file_R1)
+	file_R2 = preprocess_fastq(file_R2)
 	bc_df = preprocess_bc_file(bc_file, bc_rev)
 	if workers == 1
 		classify_sequences(file_R1, file_R2, bc_df, output_dir, max_error_rate, min_delta, mismatch, indel, classify_both)
@@ -43,8 +45,9 @@ function execute_demultiplexing(file_R1::String, bc_file::String, output_dir::St
 		error("Output directory already exists")
 	end
 	mkdir(output_dir)
-
 	workers = nworkers()
+	file_R1 = preprocess_fastq(file_R1)
+	file_R2 = preprocess_fastq(file_R2)
 	bc_df = preprocess_bc_file(bc_file, bc_rev)
 	if workers == 1
 		classify_sequences(file_R1, bc_df, output_dir, max_error_rate, min_delta, mismatch, indel)

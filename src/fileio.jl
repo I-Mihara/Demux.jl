@@ -20,6 +20,17 @@ function preprocess_bc_file(bc_file_path::String, rev::Bool = true)
 	return bc_df
 end
 
+function preprocess_fastq(file_path::String)
+    is_gzipped = run(`file --mime-type -b $file_path`) == "application/gzip\n"
+    if is_gzipped
+        decompressed_path = replace(file_path, r"\.gz$" => "")
+        run(`gunzip -c $file_path > $decompressed_path`)
+        return decompressed_path
+    else
+        return file_path
+    end
+end
+
 """
 Divides a pair of FASTQ files into smaller parts for parallel processing.
 It calculates the number of reads per worker and uses the split command to divide the files.
