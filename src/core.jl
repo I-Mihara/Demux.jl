@@ -2,15 +2,14 @@
 Orchestrates the entire demultiplexing process for FASTQ files.
 Handles the preprocessing, dividing, demultiplexing, and merging of files.
 """
-function execute_demultiplexing(file_R1::String, file_R2::String, bc_file::String, output_dir::String; max_error_rate::Float64 = 0.22, min_delta::Float64 = 0.1, mismatch::Int = 1, indel::Int = 1, classify_both::Bool = false, bc_rev::Bool = true)
+function execute_demultiplexing(file_R1::String, file_R2::String, bc_file::String, output_dir::String; max_error_rate::Float64 = 0.2, min_delta::Float64 = 0.1, mismatch::Int = 1, indel::Int = 1, classify_both::Bool = false, bc_complement::Bool = false)
 	if !isdir(output_dir)
-		error("Output directory already exists")
+		mkdir(output_dir)
 	end
-	mkdir(output_dir)
 	workers = nworkers()
-	file_R1 = preprocess_fastq(file_R1)
-	file_R2 = preprocess_fastq(file_R2)
-	bc_df = preprocess_bc_file(bc_file, bc_rev)
+	file_R1, prefix = preprocess_fastq(file_R1)
+	file_R2, prefix = preprocess_fastq(file_R2)
+	bc_df = preprocess_bc_file(bc_file, bc_complement)
 	if workers == 1
 		classify_sequences(file_R1, file_R2, bc_df, output_dir, max_error_rate, min_delta, mismatch, indel, classify_both)
 	else
@@ -40,15 +39,13 @@ function execute_demultiplexing(file_R1::String, file_R2::String, bc_file::Strin
 	end
 end
 
-function execute_demultiplexing(file_R1::String, bc_file::String, output_dir::String; max_error_rate::Float64 = 0.2, min_delta::Float64 = 0.1, mismatch::Int = 1, indel::Int = 1, bc_rev::Bool = true)
+function execute_demultiplexing(file_R1::String, bc_file::String, output_dir::String; max_error_rate::Float64 = 0.2, min_delta::Float64 = 0.1, mismatch::Int = 1, indel::Int = 1, bc_complement::Bool = false)
 	if isdir(output_dir)
-		error("Output directory already exists")
+		mkdir(output_dir)
 	end
-	mkdir(output_dir)
 	workers = nworkers()
-	file_R1 = preprocess_fastq(file_R1)
-	file_R2 = preprocess_fastq(file_R2)
-	bc_df = preprocess_bc_file(bc_file, bc_rev)
+	file_R1, prefix = preprocess_fastq(file_R1)
+	bc_df = preprocess_bc_file(bc_file, bc_complement)
 	if workers == 1
 		classify_sequences(file_R1, bc_df, output_dir, max_error_rate, min_delta, mismatch, indel)
 	else

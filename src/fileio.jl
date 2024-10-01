@@ -21,14 +21,18 @@ function preprocess_bc_file(bc_file_path::String, rev::Bool = true)
 end
 
 function preprocess_fastq(file_path::String)
+    # Decompress if gzipped
     is_gzipped = run(`file --mime-type -b $file_path`) == "application/gzip\n"
     if is_gzipped
         decompressed_path = replace(file_path, r"\.gz$" => "")
         run(`gunzip -c $file_path > $decompressed_path`)
-        return decompressed_path
     else
-        return file_path
+        decompressed_path = file_path
     end
+
+    # Extract the prefix (part of the filename before .fastq)
+    prefix = replace(basename(decompressed_path), r"\.fastq$" => "")
+    return decompressed_path, prefix
 end
 
 """
