@@ -32,8 +32,6 @@ To be published.
 * CSV >= 0.10.14
 
 ## Installation
-
-### Option 1: Using Julia's Pkg REPL Mode
 1. Open the Julia REPL (by typing `julia` in the terminal).
 2. Press `]` to enter the Pkg REPL mode.
 3. Run the following command to install `Demux.jl`:
@@ -42,19 +40,9 @@ To be published.
     ```
 4. Press the `Backspace` key to exit the Pkg mode.
 
-### Option 2: Using the Command Line
-1. Open a terminal or command prompt.
-2. Run Julia and execute the installation command directly:
-    ```bash
-    julia -e 'using Pkg; Pkg.add("Demux")'
-    ```
-
-Both methods will install `Demux.jl` and its dependencies, making it ready for use in your projects.
-
-
 ## Basic Usage
 
-The primary function of this package is `execute_demultiplexing()`. It can classify sequences in FASTQ file using barcodes from reference file. Usage is as follows:
+The primary function of this package is `execute_demultiplexing()`. It classifies sequences in a FASTQ file by aligning them with reference barcodes in barcode file. Usage is as follows:
 ```Julia
 using Demux
 execute_demultiplexing(FASTQ_file, barcode_file, output_directory)
@@ -68,7 +56,7 @@ execute_demultiplexing(FASTQ_file, barcode_file, output_directory)
 ```julia
 execute_demultiplexing(FASTQ_01, FASTQ_02, barcode_file, output_directory)
 ```
-When using two FASTQ files, sequences in the FASTQ_02 file are classified by calculating similarity scores from the FASTQ_01 sequences and barcodes in the reference file.
+When using two FASTQ files, sequences in the FASTQ_02 file are classified based on the alignment of the FASTQ_01 sequences with the reference barcodes in the barcode file. Hence, the corresponding reads in both FASTQ files must be in the same order and present in equal numbers.
 
 #### Barcode Reference File
 * The reference file is expected to be a TSV file containing the following columns: `ID`, `Full_seq`, `Full_annotation`, as shown below:
@@ -116,26 +104,26 @@ Demux.jl skips calculation of unnecessary path in DP matrix based on the setting
 The `execute_demultiplexing` function provides several optional parameters to control the demultiplexing process:
 
 ```julia
-execute_demultiplexing(FASTQ_file, barcode_file, output_directory, max_error_rate=0.2, min_delta=0.1, mismatch=1, indel=2, classify_both=true, bc_rev=true)
+execute_demultiplexing(FASTQ_file, barcode_file, output_directory, max_error_rate=0.2, min_delta=0.1, mismatch=1, indel=2, classify_both=true, bc_complement=true)
 ```
 
-- **`max_error_rate::Float64`** (default: `0.22`): 
+- **`max_error_rate::Float64`** (default: `0.2`): 
   - This is the maximum allowed error rate for matching sequences to barcodes. It is multiplied by the barcode's length to calculate the total penalty score that can be tolerated. If the sequence's alignment penalty exceeds this limit for all barcodes, it will be saved in `unknown.fastq`.
 
 - **`min_delta::Float64`** (default: `0`): 
   - This defines the minimum difference in penalty scores needed to confidently assign a sequence to a barcode. It is multiplied by the barcode's length to determine the score difference required to avoid ambiguity. If the difference between the best match's penalty score and the second-best match's score is less than this threshold, the sequence is considered ambiguous and saved in `ambiguous_classification.fastq`.
   
 - **`mismatch::Int`** (default: `1`): 
-  - The penalty score for mismatches during sequence alignment. A higher value makes the alignment more stringent by penalizing mismatches more heavily.
+  - The penalty score for mismatches during sequence alignment. A higher value makes the alignment more strict for mismatches.
 
 - **`indel::Int`** (default: `1`): 
-  - The penalty score for insertions and deletions (indels) during sequence alignment. A higher value increases the stringency by imposing a stricter penalty for gaps in the alignment.
+  - The penalty score for insertions and deletions (indels) during sequence alignment. A higher value makes the alignment more strict for insertions or deletions.
 
 - **`classify_both::Bool`** (default: `false`): 
   - If set to `true`, the function will classify both R1 and R2 sequences and output separate files for each. Otherwise, it classifies only R2 sequences by default.
 
-- **`bc_rev::Bool`** (default: `false`): 
-  - If set to `true`, the barcodes in the reference file are reversed before comparison. This is useful when the barcode sequences are provided in reverse orientation.
+- **`bc_complement::Bool`** (default: `false`): 
+  - If set to true, the barcodes in the reference file are converted to their complementary sequences before comparison. This is useful when the barcode sequences are provided in the complementary orientation.
 
 ### Example: How Barcode Length and Option Values Affect Classification
 
