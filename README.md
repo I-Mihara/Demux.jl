@@ -1,4 +1,4 @@
-# Demux
+# Demux.jl
 
 [![Build Status](https://github.com/I-Mihara/Demux.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/I-Mihara/Demux.jl/actions/workflows/CI.yml?query=branch%3Amain)
 
@@ -54,15 +54,15 @@ execute_demultiplexing(FASTQ_file, barcode_file, output_directory)
 * There is no restriction on the sequence length in the FASTQ file.
 * The function can take one or two FASTQ files as input. In the case of using two FASTQ files, the command can be executed as follows:
 ```julia
-execute_demultiplexing(FASTQ_01, FASTQ_02, barcode_file, output_directory)
+execute_demultiplexing(FASTQ_file1, FASTQ_file2, barcode_file, output_directory)
 ```
-When using two FASTQ files, sequences in the FASTQ_02 file are classified based on the alignment of the FASTQ_01 sequences with the reference barcodes in the barcode file. Hence, the corresponding reads in both FASTQ files must be in the same order and present in equal numbers.
+When using two FASTQ files, sequences in the FASTQ_file2 are classified based on the alignment of the FASTQ_file1 sequences with the reference barcodes in the barcode file. Hence, the corresponding reads in both FASTQ files must be in the same order and present in equal numbers.
 
 #### Barcode Reference File
 * The reference file is expected to be a TSV file containing the following columns: `ID`, `Full_seq`, `Full_annotation`, as shown below:
 ```
 ID  Full_seq	Full_annotation
-001-barcode ACAGACUACAAA LLLBBBBBBB33
+001-barcode ACAGACUACAAA XXXBBBBBBBXX
 ```
 * In the `Full_seq` column, the region specified as `B` in the `Full_annotation` column is considerd as the barcode.
 
