@@ -94,12 +94,12 @@ function write_fastq_entry(filepath, header, seq, plus, quality)
 end
 
 """
-Compare each sequence in the FASRQ_file1 file with the sequences in bc_df, and classify the sequences of the specified file based on that comparison.
+Compare each sequence in the FASTQ_file1 file with the sequences in bc_df, and classify the sequences of the specified file based on that comparison.
 """
-function classify_sequences(FASRQ_file1::String, FASRQ_file2::String, bc_df::DataFrame, output_dir::String, output_prefix1::String, output_prefix2::String2, max_error_rate::Float64, min_delta::Float64, mismatch::Int = 1, indel::Int = 1, classify_both = false)
+function classify_sequences(FASTQ_file1::String, FASTQ_file2::String, bc_df::DataFrame, output_dir::String, output_prefix1::String, output_prefix2::String2, max_error_rate::Float64, min_delta::Float64, mismatch::Int = 1, indel::Int = 1, classify_both = false)
 	if classify_both
-		open(FASRQ_file1, "r") do primary_file
-			open(FASRQ_file2, "r") do secondary_file
+		open(FASTQ_file1, "r") do primary_file
+			open(FASTQ_file2, "r") do secondary_file
 				header, seq, plus, quality_score = "", "", "", ""
 				header2, seq2, plus2, quality_score2 = "", "", "", ""
 				mode = "header"
@@ -130,8 +130,8 @@ function classify_sequences(FASRQ_file1::String, FASRQ_file2::String, bc_df::Dat
 			end
 		end
 	else
-		open(FASRQ_file1, "r") do primary_file
-			open(FASRQ_file2, "r") do secondary_file
+		open(FASTQ_file1, "r") do primary_file
+			open(FASTQ_file2, "r") do secondary_file
 				header2, seq2, plus2, quality_score2 = "", "", "", ""
 				mode = "header"
 				filename = ""
@@ -158,8 +158,8 @@ function classify_sequences(FASRQ_file1::String, FASRQ_file2::String, bc_df::Dat
 	end
 end
 
-function classify_sequences(FASRQ_file1::String, bc_df::DataFrame, output_dir::String, output_prefix::String, max_error_rate::Float64, min_delta::Float64, mismatch::Int = 1, indel::Int = 1)
-	open(FASRQ_file1, "r") do file
+function classify_sequences(FASTQ_file1::String, bc_df::DataFrame, output_dir::String, output_prefix::String, max_error_rate::Float64, min_delta::Float64, mismatch::Int = 1, indel::Int = 1)
+	open(FASTQ_file1, "r") do file
 		header, seq, plus, quality_score = "", "", "", ""
 		mode = "header"
 		filename = ""
