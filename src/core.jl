@@ -2,7 +2,7 @@
 Orchestrates the entire demultiplexing process for FASTQ files.
 Handles the preprocessing, dividing, demultiplexing, and merging of files.
 """
-function execute_demultiplexing(FASTQ_file1::String, FASTQ_file2::String, bc_file::String, output_dir::String; output_prefix1::String = "", output_prefix2::string = "", max_error_rate::Float64 = 0.2, min_delta::Float64 = 0.1, mismatch::Int = 1, indel::Int = 1, classify_both::Bool = false, bc_complement::Bool = false)
+function execute_demultiplexing(FASTQ_file1::String, FASTQ_file2::String, bc_file::String, output_dir::String; output_prefix1::String = "", output_prefix2::String = "", max_error_rate::Float64 = 0.2, min_delta::Float64 = 0.1, mismatch::Int = 1, indel::Int = 1, classify_both::Bool = false, bc_complement::Bool = false)
 	if !isdir(output_dir)
 		mkdir(output_dir)
 	end
@@ -20,7 +20,7 @@ function execute_demultiplexing(FASTQ_file1::String, FASTQ_file2::String, bc_fil
 		classify_sequences(FASTQ_file1, FASTQ_file2, bc_df, output_dir, output_prefix1, output_prefix2, max_error_rate, min_delta, mismatch, indel, classify_both)
 	else
 		divided_dir = divide_fastq(FASTQ_file1, FASTQ_file2, output_dir, workers)
-		pmap(x -> mlt_demltplex(x, bc_df, divided_dir, output_prefix1, output_prefix2, max_error_rate, min_delta, mismatch, indel, classify_both), 1:workers)
+		pmap(x -> multi_demultiplex(x, bc_df, divided_dir, output_prefix1, output_prefix2, max_error_rate, min_delta, mismatch, indel, classify_both), 1:workers)
 
 		paths = []
 		for (root, dirs, files) in walkdir(divided_dir)
@@ -41,7 +41,7 @@ function execute_demultiplexing(FASTQ_file1::String, FASTQ_file2::String, bc_fil
 end
 
 function execute_demultiplexing(FASTQ_file::String, bc_file::String, output_dir::String; output_prefix::String = "", max_error_rate::Float64 = 0.2, min_delta::Float64 = 0.1, mismatch::Int = 1, indel::Int = 1, bc_complement::Bool = false)
-	if isdir(output_dir)
+	if !isdir(output_dir)
 		mkdir(output_dir)
 	end
 	workers = nworkers()
@@ -54,7 +54,7 @@ function execute_demultiplexing(FASTQ_file::String, bc_file::String, output_dir:
 		classify_sequences(FASTQ_file, bc_df, output_dir, output_prefix, max_error_rate, min_delta, mismatch, indel)
 	else
 		divided_dir = divide_fastq(FASTQ_file, output_dir, workers)
-		pmap(x -> mlt_demltplex(x, bc_df, output_dir, output_prefix, max_error_rate, min_delta, mismatch, indel), 1:workers)
+		pmap(x -> multi_demultiplex(x, bc_df, output_dir, output_prefix, max_error_rate, min_delta, mismatch, indel), 1:workers)
 		paths = []
 		for (root, dirs, files) in walkdir(divided_dir)
 			for file in files

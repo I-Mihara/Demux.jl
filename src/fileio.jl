@@ -60,9 +60,10 @@ function divide_fastq(FASTQ_file::String, output_dir::String,workers::Int)
 	reads_per_worker = cld(total_reads, workers)
 	lines_per_worker = reads_per_worker * 4
 	run(`split -l $lines_per_worker -a 5 -d $FASTQ_file $divided_dir/ --additional-suffix=.fastq`)
+	return divided_dir
 end
 
-function mlt_demltplex(thread_num::Int, bc_df::DataFrame, divided_dir::String, output_prefix1::String, output_prefix2::String, max_error_rate::Float64, min_delta::Float64, mismatch::Int, indel::Int, classify_both::Bool)
+function multi_demultiplex(thread_num::Int, bc_df::DataFrame, divided_dir::String, output_prefix1::String, output_prefix2::String, max_error_rate::Float64, min_delta::Float64, mismatch::Int, indel::Int, classify_both::Bool)
 	FASTQ_file1 = divided_dir * "/file1_" * lpad((thread_num - 1), 5, "0") * ".fastq"
 	FASTQ_file2 = divided_dir * "/file2_" * lpad((thread_num - 1), 5, "0") * ".fastq"
 	mkdir(divided_dir * "/thread" * string(thread_num))
@@ -70,7 +71,7 @@ function mlt_demltplex(thread_num::Int, bc_df::DataFrame, divided_dir::String, o
 	classify_sequences(FASTQ_file1, FASTQ_file2, bc_df, output_dir, output_prefix1, output_prefix2, max_error_rate, min_delta, mismatch, indel, classify_both)
 end
 
-function mlt_demltplex(thread_num::Int, bc_df::DataFrame, divided_dir::String, output_prefix::String, max_error_rate::Float64, min_delta::Float64, mismatch::Int, indel::Int)
+function multi_demultiplex(thread_num::Int, bc_df::DataFrame, divided_dir::String, output_prefix::String, max_error_rate::Float64, min_delta::Float64, mismatch::Int, indel::Int)
 	FASTQ_file = divided_dir * "/" * lpad((thread_num - 1), 5, "0") * ".fastq"
 	mkdir(divided_dir * "/thread" * string(thread_num))
 	output_dir = divided_dir * "/thread" * string(thread_num)

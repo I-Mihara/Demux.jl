@@ -5,14 +5,14 @@ module Demux
 export
 	semiglobal_alignment,
 	find_best_matching_bc,
-	determine_filemname,
+	determine_filename,
 	write_fastq_entry,
 	classify_sequences,
 
 	preprocess_bc_file,
 	preprocess_fastq,
 	divide_fastq,
-	mlt_demltplex,
+	multi_demultiplex,
 	merge_fastq_files,
 	execute_demultiplexing
 
