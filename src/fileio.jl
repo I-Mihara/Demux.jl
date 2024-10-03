@@ -1,8 +1,8 @@
 """
 Preprocesses the barcode file by modifying sequences based on specific criteria.
 """
-function preprocess_bc_file(bc_file_path::String, rev::Bool = true)
-	bc_df = CSV.read(bc_file_path, DataFrame, delim = "\t")
+function preprocess_bc_file(bc_file::String, complement::Bool)
+	bc_df = CSV.read(bc_file, DataFrame, delim = "\t")
 	for i in 1:nrow(bc_df)
 		prefix_region = 1:findfirst('B', bc_df.Full_annotation[i])-1
 		suffix_region = findlast('B', bc_df.Full_annotation[i])+1:length(bc_df.Full_annotation[i])
@@ -13,7 +13,7 @@ function preprocess_bc_file(bc_file_path::String, rev::Bool = true)
 	end
 	bc_df.Full_seq = uppercase.(bc_df.Full_seq)
 	bc_df.Full_seq = replace.(bc_df.Full_seq, "U" => "T")
-	if rev == true
+	if complement == true
 		bc_df.Full_seq = reverse.(bc_df.Full_seq)
 		bc_df.Full_seq = replace.(bc_df.Full_seq, "A" => "T", "T" => "A", "G" => "C", "C" => "G")
 	end

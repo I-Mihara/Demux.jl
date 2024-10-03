@@ -96,7 +96,7 @@ end
 """
 Compare each sequence in the FASTQ_file1 file with the sequences in bc_df, and classify the sequences of the specified file based on that comparison.
 """
-function classify_sequences(FASTQ_file1::String, FASTQ_file2::String, bc_df::DataFrame, output_dir::String, output_prefix1::String, output_prefix2::String2, max_error_rate::Float64, min_delta::Float64, mismatch::Int = 1, indel::Int = 1, classify_both = false)
+function classify_sequences(FASTQ_file1::String, FASTQ_file2::String, bc_df::DataFrame, output_dir::String, output_prefix1::String, output_prefix2::String, max_error_rate::Float64, min_delta::Float64, mismatch::Int, indel::Int, classify_both::Bool)
 	if classify_both
 		open(FASTQ_file1, "r") do primary_file
 			open(FASTQ_file2, "r") do secondary_file
