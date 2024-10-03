@@ -10,6 +10,7 @@ export
 	classify_sequences,
 
 	preprocess_bc_file,
+	preprocess_fastq,
 	divide_fastq,
 	mlt_demltplex,
 	merge_fastq_files,
