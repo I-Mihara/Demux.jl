@@ -1,4 +1,4 @@
-# Demux.jl
+![package_logo](Demux_logo.jpg)
 
 [![Build Status](https://github.com/I-Mihara/Demux.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/I-Mihara/Demux.jl/actions/workflows/CI.yml?query=branch%3Amain)
 
@@ -93,7 +93,7 @@ addprocs(n) # 'n' is the number of desired workers
 Once the worker processes are set up. you can perform parallel computing using the `execute_demultiplexing` function. `Demux.jl` automatically divides the files based on the available worker processes for faster computation:
 ```julia
 @everywhere using Demux
-execute_demultiplexing(FASTQ_R1, FASTQ_R2, barcode_file, output_directory)
+execute_demultiplexing(FASTQ_file1, FASTQ_file2, barcode_file, output_directory)
 ```
 
 ### 2. Setting Options
