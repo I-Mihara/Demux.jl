@@ -2,7 +2,12 @@
 Preprocesses the barcode file by modifying sequences based on specific criteria.
 """
 function preprocess_bc_file(bc_file::String, complement::Bool)
-	bc_df = CSV.read(bc_file, DataFrame, delim = "\t")
+	mime_type = readchomp(`file --mime-type -b $bc_file`)
+	delim = "\t"
+	if occursin(r"\.csv$", bc_file) || mime_type == "text/csv"
+		delim = ","
+	end
+	bc_df = CSV.read(bc_file, DataFrame, delim = delim)
 	for i in 1:nrow(bc_df)
 		prefix_region = 1:findfirst('B', bc_df.Full_annotation[i])-1
 		suffix_region = findlast('B', bc_df.Full_annotation[i])+1:length(bc_df.Full_annotation[i])
