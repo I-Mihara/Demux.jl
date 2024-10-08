@@ -3,7 +3,7 @@
 [![Build Status](https://github.com/I-Mihara/Demux.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/I-Mihara/Demux.jl/actions/workflows/CI.yml?query=branch%3Amain)
 
 ## Overview
-Demux.jl is a Julia package designed for demultiplexing reads based on barcodes. Given a set of sequencing reads in FASTQ format and a reference barcode in TSV format, each read is assigned to a FASTQ file corresponding to its barcode. This barcode assignment process is designed to be robust to barcode mutations and allows you to adjust the permitted level of mutation through parameters.
+Demux.jl is a Julia package designed for demultiplexing reads based on barcodes. Given a set of sequencing reads in FASTQ format and a reference barcode in CSV or TSV format, each read is assigned to a FASTQ file corresponding to its barcode. This barcode assignment process is designed to be robust to barcode mutations and allows you to adjust the permitted level of mutation through parameters.
 
 ### Package features
 * Fast and accurate semi-global alignment
@@ -59,7 +59,7 @@ execute_demultiplexing(FASTQ_file1, FASTQ_file2, barcode_file, output_directory)
 When using two FASTQ files, sequences in the FASTQ_file2 are classified based on the alignment of the FASTQ_file1 sequences with the reference barcodes in the barcode file. Hence, the corresponding reads in both FASTQ files must be in the same order and present in equal numbers.
 
 #### Barcode Reference File
-* The reference file is expected to be a TSV file containing the following columns: `ID`, `Full_seq`, `Full_annotation`, as shown below:
+* The reference file is expected to be a CSV or TSV file containing the following columns: `ID`, `Full_seq`, `Full_annotation`, as shown below:
 ```
 ID  Full_seq	Full_annotation
 001-barcode ACAGACUACAAA XXXBBBBBBBXX
