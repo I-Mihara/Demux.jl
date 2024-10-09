@@ -31,7 +31,9 @@ function preprocess_fastq(file_path::String)
 	is_gzipped = mine_type == "application/x-gzip"
     if is_gzipped
         decompressed_path = replace(file_path, r"\.gz$" => "")
-        run(`gunzip -c $file_path \> $decompressed_path`)
+		open(decompressed_path, "w") do output_file
+            run(pipeline(`gunzip -c $file_path`, output_file))
+        end
     else
         decompressed_path = file_path
     end
