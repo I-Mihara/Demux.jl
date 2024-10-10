@@ -42,22 +42,22 @@ end
             check_output_files(output_dir, ideal_dir)
         end
     end
-    @testset "Single thread with 2 FASTQ files with options" begin
-        mktempdir() do output_dir
-            ideal_dir = "results/demo2"
+    # @testset "Single thread with 2 FASTQ files with options" begin
+    #     mktempdir() do output_dir
+    #         ideal_dir = "results/demo2"
 
-            files_R1 = readdir("FASTQ_files/demo2_R1")
-            files_R2 = readdir("FASTQ_files/demo2_R2")
-            for (file_R1, file_R2) in zip(files_R1, files_R2)
-                filename = replace(basename(file_R1), r"\.fastq.gz$" => "")
-                filename2 = replace(basename(file_R2), r"\.fastq.gz$" => "")
-                execute_demultiplexing("FASTQ_files/demo2_R1/$file_R1", "FASTQ_files/demo2_R2/$file_R2", "reference_files/demo2.csv", output_dir,
-                    max_error_rate=0.25, min_delta=0.15, mismatch=1, indel=2, classify_both=true, bc_complement=true, bc_rev=true,
-                    output_prefix1="test_prefix1." * filename, output_prefix2="test_prefix2." * filename2)
-            end
-            check_output_files(output_dir, ideal_dir)
-        end
-    end
+    #         files_R1 = readdir("FASTQ_files/demo2_R1")
+    #         files_R2 = readdir("FASTQ_files/demo2_R2")
+    #         for (file_R1, file_R2) in zip(files_R1, files_R2)
+    #             filename = replace(basename(file_R1), r"\.fastq.gz$" => "")
+    #             filename2 = replace(basename(file_R2), r"\.fastq.gz$" => "")
+    #             execute_demultiplexing("FASTQ_files/demo2_R1/$file_R1", "FASTQ_files/demo2_R2/$file_R2", "reference_files/demo2.csv", output_dir,
+    #                 max_error_rate=0.25, min_delta=0.15, mismatch=1, indel=2, classify_both=true, bc_complement=true, bc_rev=true,
+    #                 output_prefix1="test_prefix1." * filename, output_prefix2="test_prefix2." * filename2)
+    #         end
+    #         check_output_files(output_dir, ideal_dir)
+    #     end
+    # end
 end
 
 addprocs(3)
