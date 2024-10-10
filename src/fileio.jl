@@ -1,7 +1,7 @@
 """
 Preprocesses the barcode file by modifying sequences based on specific criteria.
 """
-function preprocess_bc_file(bc_file::String, complement::Bool)
+function preprocess_bc_file(bc_file::String, complement::Bool, rev::Bool)
 	mime_type = readchomp(`file --mime-type -b $bc_file`)
 	delim = "\t"
 	if occursin(r"\.csv$", bc_file) || mime_type == "text/csv"
@@ -19,8 +19,10 @@ function preprocess_bc_file(bc_file::String, complement::Bool)
 	bc_df.Full_seq = uppercase.(bc_df.Full_seq)
 	bc_df.Full_seq = replace.(bc_df.Full_seq, "U" => "T")
 	if complement == true
-		bc_df.Full_seq = reverse.(bc_df.Full_seq)
 		bc_df.Full_seq = replace.(bc_df.Full_seq, "A" => "T", "T" => "A", "G" => "C", "C" => "G")
+	end
+	if rev == true
+		bc_df.Full_seq = reverse.(bc_df.Full_seq)
 	end
 	return bc_df
 end

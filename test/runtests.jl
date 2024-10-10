@@ -84,7 +84,7 @@ end
             for (file_R1, file_R2) in zip(files_R1, files_R2)
                 execute_demultiplexing("FASTQ_files/demo2_R1/$file_R1", "FASTQ_files/demo2_R2/$file_R2", "reference_files/demo2.csv", "output_dir",
                     max_error_rate=0.25, min_delta=0.15, mismatch=1, indel=2, classify_both=true, bc_complement=true,
-                    output_prefix="test_prefix1", output_prefix2="test_prefix2")
+                    output_prefix1="test_prefix1", output_prefix2="test_prefix2")
             end
             check_output_files(output_dir, ideal_dir)
         end
