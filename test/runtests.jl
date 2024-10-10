@@ -44,7 +44,7 @@ end
     end
 end
 
-addprocs(4)
+addprocs(3)
 @everywhere using Demux
 @testset "Multi Thread Tests" begin
     @testset "Multi-thread with 1 FASTQ file" begin
