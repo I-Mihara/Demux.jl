@@ -95,7 +95,7 @@ function merge_fastq_files(paths::Vector, bc_df::DataFrame, output_dir::String, 
 		run(pipeline(`cat $paths_unknown`, stdout = "$output_dir/$prefix.unknown.fastq"))
 	end
 
-	paths_ambiguous_classification = filter(x -> occursin(r".*/ambiguous_classification.fastq", x), paths)
+	paths_ambiguous_classification = filter(x -> occursin(r".*ambiguous_classification.fastq", x), paths)
 	if paths_ambiguous_classification != []
 		run(pipeline(`cat $paths_ambiguous_classification`, stdout = "$output_dir/$prefix.ambiguous_classification.fastq"))
 	end

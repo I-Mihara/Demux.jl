@@ -41,7 +41,7 @@ function execute_demultiplexing(FASTQ_file1::String, FASTQ_file2::String, bc_fil
 	end
 end
 
-function execute_demultiplexing(FASTQ_file::String, bc_file::String, output_dir::String; output_prefix::String = "", max_error_rate::Float64 = 0.2, min_delta::Float64 = 0.1, mismatch::Int = 1, indel::Int = 1, bc_complement::Bool = false, bc_reverse::Bool = false)
+function execute_demultiplexing(FASTQ_file::String, bc_file::String, output_dir::String; output_prefix::String = "", max_error_rate::Float64 = 0.2, min_delta::Float64 = 0.1, mismatch::Int = 1, indel::Int = 1, bc_complement::Bool = false, bc_rev::Bool = false)
 	if !isdir(output_dir)
 		mkdir(output_dir)
 	end
