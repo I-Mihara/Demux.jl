@@ -24,7 +24,7 @@ To be published.
   - [Output](#output)
 - [Tips to Speed Up Demultiplexing](#tips-to-speed-up-demultiplexing)
 - [Options](#options)
-  - [Example: How Barcode Length and Option Values Affect Classification](#example-how-barcode-length-and-option-values-affect-classification)
+- [Example: How Barcode Length and Option Values Affect Classification](#example-how-barcode-length-and-option-values-affect-classification)
 - [Support or Contact](#support-or-contact)
 
 
@@ -140,7 +140,7 @@ execute_demultiplexing(FASTQ_file, barcode_file, output_directory, output_prefix
 - **`output_prefix::String`** (default: `""`):
   - Specifies the prefix for the output files when processing a single FASTQ file. If not provided, the prefix defaults to the name of the FASTQ file.
 
-### Example: How Barcode Length and Option Values Affect Classification
+## Example: How Barcode Length and Option Values Affect Classification
 
 We assume the case where Barcode Length is 10, `max_error_rate ` is 0.2, `min_delta` is 0.2, `mismatch` is 1, `indel` is 2.
 
