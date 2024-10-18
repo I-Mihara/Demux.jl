@@ -5,6 +5,8 @@
 ## Overview
 Demux.jl is a Julia package designed for demultiplexing reads based on barcodes. Given a set of sequencing reads in FASTQ format and a reference barcode in CSV or TSV format, each read is assigned to a FASTQ file corresponding to its barcode. This barcode assignment process is designed to be robust to barcode mutations and allows you to adjust the permitted level of mutation through parameters.
 
+![conceptual_diagram](conceptual_diagram.png)
+
 ### Package features
 * Fast and accurate semi-global alignment
 * Robust to barcode mutations
@@ -52,11 +54,12 @@ execute_demultiplexing(FASTQ_file, barcode_file, output_directory)
 
 #### FASTQ File
 * There is no restriction on the sequence length in the FASTQ file.
+* The input can be gzipped; the function automatically detects and processes the files accordingly.
 * The function can take one or two FASTQ files as input. In the case of using two FASTQ files, the command can be executed as follows:
 ```julia
 execute_demultiplexing(FASTQ_file1, FASTQ_file2, barcode_file, output_directory)
 ```
-When using two FASTQ files, sequences in the FASTQ_file2 are classified based on the alignment of the FASTQ_file1 sequences with the reference barcodes in the barcode file. Hence, the corresponding reads in both FASTQ files must be in the same order and present in equal numbers.
+When using two FASTQ files, sequences in the FASTQ_file2 are classified based on the alignment of the FASTQ_file1 sequences with the barcodes in the barcode reference file. Hence, the corresponding reads in both FASTQ files must be in the same order and present in equal numbers.
 
 #### Barcode Reference File
 * The reference file is expected to be a CSV or TSV file containing the following columns: `ID`, `Full_seq`, `Full_annotation`, as shown below:
@@ -69,9 +72,9 @@ ID  Full_seq	Full_annotation
 ### Output
 
 * All output files will be saved in the specified `output_directory`.
-* The names of the output files are based on the `ID` values in the barcode reference file. For example, if the reference file contains IDs such as `001` and `002`, the resulting output files will be named `001.fastq`, `002.fastq`, and so on.
-* Sequences that do not match any barcode in the reference file are saved in `unknown.fastq`. Sequences that have ambiguous classification (i.e., they match multiple barcodes with similar scores) are saved in `ambiguous_classification.fastq`.
-* The function will throw an error if the specified `output_directory` already exists to prevent overwriting. A new directory is created to store the output files.
+* The names of the output files are based on the filename of the FASTQ file as the prefix and the `ID` values in the barcode reference file. For example, if the FASTQ filename is `sample.fastq` and the reference file contains IDs such as `001` and `002`, the resulting output files will be named `sample.001.fastq`, `sample.002.fastq`, and so on. You can freely change the prefix by specifying the `output_prefix` argument.
+* Sequences that do not match any barcode in the reference file are saved in `unknown.fastq`. Sequences that have ambiguous classification (i.e., they match multiple barcodes with similar scores) are saved in `ambiguous_classification.fastq`. These FASTQ files also have prefix like `sample.unknown.fastq` and `sample.ambiguous_classification.fastq`
+* If the `output_directory` does not exist, a new directory is created to store the output files.
 
 ## Tips to Speed Up Demultiplexing
 
@@ -104,13 +107,13 @@ Demux.jl skips calculation of unnecessary path in DP matrix based on the setting
 The `execute_demultiplexing` function provides several optional parameters to control the demultiplexing process:
 
 ```julia
-execute_demultiplexing(FASTQ_file, barcode_file, output_directory, max_error_rate=0.2, min_delta=0.1, mismatch=1, indel=2, classify_both=true, bc_complement=true)
+execute_demultiplexing(FASTQ_file, barcode_file, output_directory, output_prefix="", max_error_rate=0.2, min_delta=0.1, mismatch=1, indel=1, classify_both=false, bc_complement=false, bc_rev=false)
 ```
 
 - **`max_error_rate::Float64`** (default: `0.2`): 
   - This is the maximum allowed error rate for matching sequences to barcodes. It is multiplied by the barcode's length to calculate the total penalty score that can be tolerated. If the sequence's alignment penalty exceeds this limit for all barcodes, it will be saved in `unknown.fastq`.
 
-- **`min_delta::Float64`** (default: `0`): 
+- **`min_delta::Float64`** (default: `0.1`): 
   - This defines the minimum difference in penalty scores needed to confidently assign a sequence to a barcode. It is multiplied by the barcode's length to determine the score difference required to avoid ambiguity. If the difference between the best match's penalty score and the second-best match's score is less than this threshold, the sequence is considered ambiguous and saved in `ambiguous_classification.fastq`.
   
 - **`mismatch::Int`** (default: `1`): 
@@ -120,10 +123,22 @@ execute_demultiplexing(FASTQ_file, barcode_file, output_directory, max_error_rat
   - The penalty score for insertions and deletions (indels) during sequence alignment. A higher value makes the alignment more strict for insertions or deletions.
 
 - **`classify_both::Bool`** (default: `false`): 
-  - If set to `true`, the function will classify both R1 and R2 sequences and output separate files for each. Otherwise, it classifies only R2 sequences by default.
+  - If set to `true`, the function will classify sequences in both ``FASTQ_file1` and `FASTQ_file2` and output separate files for each. Otherwise, it classifies only R2 sequences by default.
 
 - **`bc_complement::Bool`** (default: `false`): 
-  - If set to true, the barcodes in the reference file are converted to their complementary sequences before comparison. This is useful when the barcode sequences are provided in the complementary orientation.
+  - If set to true, the barcodes in the reference file are converted to their complementary sequences before alignment.
+
+- **`bc_rev::Bool`** (default: `false`):
+  - If set to true, the barcodes in the reference file are reversed before alignment.
+
+- **`output_prefix1::String`** (default: `""`):
+  - Specifies the prefix for the first set of output files. If not provided, the prefix defaults to the name of the FASTQ file. By setting this option, you can customize the file names for the first set of outputs.
+
+- **`output_prefix2::String`** (default: `""`):
+  - Specifies the prefix for the second set of output files. If not provided, the prefix defaults to the name of the FASTQ file. By setting this option, you can customize the file names for the second set of outputs.
+
+- **`output_prefix::String`** (default: `""`):
+  - Specifies the prefix for the output files when processing a single FASTQ file. If not provided, the prefix defaults to the name of the FASTQ file.
 
 ### Example: How Barcode Length and Option Values Affect Classification
 
