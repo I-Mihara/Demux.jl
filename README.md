@@ -25,6 +25,7 @@ To be published.
 - [Tips to Speed Up Demultiplexing](#tips-to-speed-up-demultiplexing)
 - [Options](#options)
 - [Example: How Barcode Length and Option Values Affect Classification](#example-how-barcode-length-and-option-values-affect-classification)
+- [How to run tests](#how-to-run-tests)
 - [Support or Contact](#support-or-contact)
 
 
@@ -172,6 +173,12 @@ With this settings, the classification works as follows:
 4. **Unknown Classification**:
    - If the sequence fails to match **any** barcode within the maximum allowed penalty score of 2, it is classified as `unknown.fastq`.
 
+## How to Run Tests
+To ensure that `Demux.jl` functions correctly, you can run tests using the Julia package's built-in testing functionality. 
+```julia
+using Pkg
+Pkg.test("Demux")
+```
 
 ## Support or Contanct
 If you encounter any issues or have requests, please provide feedback by posting a new GitHub issue on our repository. We appreciate your input and will do our best to assist you!
